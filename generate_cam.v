@@ -61,22 +61,22 @@ module generate_cam
 						cmos_data <= cam_data[7:0];
 						if(cnt_cam[31:0] < hor_num - 1) begin
 							cnt_cam[31:0] <= cnt_cam[31:0] + 1;
-							     if(cnt_cam[31:0] < 80)  begin cam_data[15:0] <= 16'b1000_0000_0000_0000; end  //red
-							else if(cnt_cam[31:0] < 160) begin cam_data[15:0] <= 16'b0100_0000_0000_0000; end  //red
-							else if(cnt_cam[31:0] < 240) begin cam_data[15:0] <= 16'b0010_0000_0000_0000; end  //red
-							else if(cnt_cam[31:0] < 320) begin cam_data[15:0] <= 16'b0001_0000_0000_0000; end  //red
-							else if(cnt_cam[31:0] < 400) begin cam_data[15:0] <= 16'b0000_1000_0000_0000; end  //red
-							else if(cnt_cam[31:0] < 480) begin cam_data[15:0] <= 16'b0000_0100_0000_0000; end  //green
-							else if(cnt_cam[31:0] < 560) begin cam_data[15:0] <= 16'b0000_0010_0000_0000; end  //green
-							else if(cnt_cam[31:0] < 640) begin cam_data[15:0] <= 16'b0000_0001_0000_0000; end  //green				
-							else if(cnt_cam[31:0] < 720) begin cam_data[15:0] <= 16'b0000_0000_1000_0000; end  //green
-							else if(cnt_cam[31:0] < 800) begin cam_data[15:0] <= 16'b0000_0000_0100_0000; end  //green
-							else if(cnt_cam[31:0] < 880) begin cam_data[15:0] <= 16'b0000_0000_0010_0000; end  //green
-							else if(cnt_cam[31:0] < 960) begin cam_data[15:0] <= 16'b0000_0000_0001_0000; end  //blue
-							else if(cnt_cam[31:0] < 1040) begin cam_data[15:0] <= 16'b0000_0000_0000_1000; end  //blue
-							else if(cnt_cam[31:0] < 1120) begin cam_data[15:0] <= 16'b0000_0000_0000_0100; end  //blue
-							else if(cnt_cam[31:0] < 1200) begin cam_data[15:0] <= 16'b0000_0000_0000_0010; end  //blue
-							else if(cnt_cam[31:0] < 1280) begin cam_data[15:0] <= 16'b0000_0000_0000_0001; end  //blue
+							     if(cnt_cam[31:0] < 79)  begin cam_data[15:0] <= 16'b1000_0000_0000_0000; end  //red
+							else if(cnt_cam[31:0] < 159) begin cam_data[15:0] <= 16'b0100_0000_0000_0000; end  //red
+							else if(cnt_cam[31:0] < 239) begin cam_data[15:0] <= 16'b0010_0000_0000_0000; end  //red
+							else if(cnt_cam[31:0] < 319) begin cam_data[15:0] <= 16'b0001_0000_0000_0000; end  //red
+							else if(cnt_cam[31:0] < 399) begin cam_data[15:0] <= 16'b0000_1000_0000_0000; end  //red
+							else if(cnt_cam[31:0] < 479) begin cam_data[15:0] <= 16'b0000_0100_0000_0000; end  //green
+							else if(cnt_cam[31:0] < 559) begin cam_data[15:0] <= 16'b0000_0010_0000_0000; end  //green
+							else if(cnt_cam[31:0] < 639) begin cam_data[15:0] <= 16'b0000_0001_0000_0000; end  //green				
+							else if(cnt_cam[31:0] < 719) begin cam_data[15:0] <= 16'b0000_0000_1000_0000; end  //green
+							else if(cnt_cam[31:0] < 799) begin cam_data[15:0] <= 16'b0000_0000_0100_0000; end  //green
+							else if(cnt_cam[31:0] < 879) begin cam_data[15:0] <= 16'b0000_0000_0010_0000; end  //green
+							else if(cnt_cam[31:0] < 959) begin cam_data[15:0] <= 16'b0000_0000_0001_0000; end  //blue
+							else if(cnt_cam[31:0] < 1039) begin cam_data[15:0] <= 16'b0000_0000_0000_1000; end  //blue
+							else if(cnt_cam[31:0] < 1119) begin cam_data[15:0] <= 16'b0000_0000_0000_0100; end  //blue
+							else if(cnt_cam[31:0] < 1199) begin cam_data[15:0] <= 16'b0000_0000_0000_0010; end  //blue
+							else if(cnt_cam[31:0] < 1279) begin cam_data[15:0] <= 16'b0000_0000_0000_0001; end  //blue
 						end
 						else begin
 							cnt_cam[31:0] <= 0;
