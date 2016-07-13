@@ -24,12 +24,7 @@ module sram(
 	reg		[data_bits - 1 : 0] sram_data_r;
 	assign	  sram_data = data_flag ? sram_data_r : 16'bzzzz_zzzz_zzzz_zzzz;
 	always@(*) begin
-		if(!sram_cs && !sram_we) begin
-			mem[sram_addr] = sram_data;
-			data_flag = 0;
-		end
-		
-		else if(!sram_oe) begin
+		if(!sram_oe) begin
 			sram_data_r = mem[sram_addr];
 			data_flag = 1;
 		end	
@@ -40,6 +35,9 @@ module sram(
 	
 	end
 	
+	always@(negedge sram_we) begin
+		mem[sram_addr] = sram_data;
+	end
 endmodule
 
 

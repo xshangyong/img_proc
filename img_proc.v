@@ -42,6 +42,8 @@ module img_proc
 	reg			wrb_en=0;
 	reg			rda_en=0;
 	reg			rdb_en=0;
+	reg			outa_valid=0;
+	reg			outb_valid=0;
 	reg[10:0]	row_count=0;		
 	reg			sram_wr_data_flag=0;
 	wire		valid_pos, valid_neg;
@@ -200,6 +202,9 @@ module img_proc
 						sram_oe			<= 	0;			
 						wra_addr		<= 	line_wra_addr;
 						wra_en			<= 	1;
+						wrb_en			<= 	0;
+						rda_en			<=	0;
+						rdb_en			<=	0;
 						if(line_wra_addr ==IMG_COL - 1 ) begin
 							row_count 	<= row_count + 1;
 							line_wra_addr	<= 0;
@@ -215,6 +220,9 @@ module img_proc
 						sram_oe			<= 	0;			
 						wrb_addr		<= 	line_wrb_addr;
 						wrb_en			<= 	1;
+						wra_en			<= 	0;
+						rda_en			<=	1;
+						rdb_en			<=	0;
 						rda_addr		<= 	line_rda_addr;
 						line_rda_addr	<= 	line_rda_addr + 1;
 						if(line_wrb_addr ==IMG_COL - 1 ) begin
@@ -232,6 +240,9 @@ module img_proc
 						sram_oe			<= 	0;			
 						wra_addr		<= 	line_wra_addr;
 						wra_en			<= 	1;
+						wrb_en			<= 	0;
+						rda_en			<=	0;
+						rdb_en			<=	1;
 						rdb_addr		<= 	line_rdb_addr;
 						line_rdb_addr	<= 	line_rdb_addr + 1;
 						if(line_wra_addr ==IMG_COL - 1 ) begin
@@ -249,6 +260,10 @@ module img_proc
 						sram_rd_addr	<=	sram_rd_addr + 1;
 						sram_oe			<= 	0;		
 						rdb_addr		<= 	line_rdb_addr;
+						wra_en			<= 	0;
+						wrb_en			<= 	0;
+						rda_en			<=	0;
+						rdb_en			<=	1;
 						line_rdb_addr	<= 	line_rdb_addr + 1;
 						if(line_rdb_addr ==IMG_COL - 1 ) begin
 							row_count 	<= row_count + 1;
@@ -260,7 +275,10 @@ module img_proc
 						end
 					end
 					PROC_SUB_END : begin
-					
+						wra_en			<= 	0;
+						wrb_en			<= 	0;
+						rda_en			<=	0;
+						rdb_en			<=	0;
 					end
 				endcase
 			end
@@ -273,7 +291,10 @@ module img_proc
 		endcase
 	end
 
-	
+	always@(posedge cmos_pclk)begin
+		outa_valid <= rda_en;
+		outb_valid <= rdb_en;
+	end
 	line_buf inst_linea
 	(
 		.data		(sram_data),
@@ -293,17 +314,32 @@ module img_proc
 		.wraddress	(wrb_addr),
 		.wrclock	(cmos_pclk),
 		.wren		(wrb_en),
-		.q          (outa_datb)
+		.q          (outb_data)
 	);	
 	
 	always@(*)begin
-		if(proc_sub_st==PROC_SUB_WBRA) begin
+		if(outa_valid==1) begin
 			coms_data_proc=outa_data;
 		end
-		else if(proc_sub_st==PROC_SUB_WARB || proc_sub_st == PROC_SUB_RB) begin
-			coms_data_proc=outa_datb;
+		else if(outb_valid==1) begin
+			coms_data_proc=outb_data;
+		end
+		else begin
+			coms_data_proc=0;
 		end
 	end
+	assign coms_valid_proc = outa_valid | outb_valid;
+	
+	rgb2hsv inst_rgb2hsv
+	(
+		.rgb_in			(),
+		.rgb_clk_in		(),
+		.rgb_fram_valid	(),
+		.hsv_out		(),
+		.hsv_clk_out    (),
+		.hsv_fram_valid ()
+	);
+	
 	
 	
 endmodule
