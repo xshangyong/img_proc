@@ -47,6 +47,7 @@ module img_proc
 	reg[10:0]	row_count=0;		
 	reg			sram_wr_data_flag=0;
 	wire		valid_pos, valid_neg;
+	reg			frame_valid=0;
 	wire[15:0]	outa_data;
 	wire[15:0]	outb_data;
 	
@@ -116,7 +117,12 @@ module img_proc
 					end
 					PROC_SUB_WBRA : begin
 						if(line_wrb_addr ==IMG_COL - 1 ) begin
-							nxt_sub_fst = PROC_SUB_WARB;
+							if(row_count==IMG_ROW - 1) begin
+								nxt_sub_fst = PROC_SUB_RB;
+							end
+							else begin
+								nxt_sub_fst = PROC_SUB_WARB;
+							end
 						end
 						else begin
 							nxt_sub_fst = nxt_sub_fst;
@@ -124,12 +130,7 @@ module img_proc
 					end
 					PROC_SUB_WARB : begin
 						if(line_wra_addr ==IMG_COL - 1 ) begin
-							if(row_count==IMG_ROW - 2) begin
-								nxt_sub_fst = PROC_SUB_RB;
-							end
-							else begin
-								nxt_sub_fst = PROC_SUB_WBRA;
-							end
+							nxt_sub_fst = PROC_SUB_WBRA;
 						end
 						else begin
 							nxt_sub_fst = nxt_sub_fst;
@@ -150,9 +151,9 @@ module img_proc
 					end
 				endcase
 			end
-//			PROC_END : begin
-//				;
-//			end
+			PROC_END : begin
+				nxt_fst = PROC_IDE;
+			end
 		endcase
 	end
 	
@@ -167,11 +168,12 @@ module img_proc
 				sram_addr	 <= 0;
 				sram_we	 	 <= 1;
 				sram_oe	 	 <= 1;
-				
+				frame_valid  <= 0;
 				
 			end
 			PROC_WR_SRAM : begin
 				sram_oe		<= 	1;
+				frame_valid  <= 1;
 				if(data_16b_en == 1) begin
 					sram_wr_addr 		<= 	sram_wr_addr + 1;
 					sram_addr 			<= 	sram_wr_addr;
@@ -186,6 +188,7 @@ module img_proc
 				end
 			end
 			PROC_FILTER : begin
+				frame_valid  <= 1;
 				sram_we		<=	1;
 				case(proc_sub_st)
 					PROC_SUB_IDLE : begin
@@ -256,9 +259,7 @@ module img_proc
 					end
 					
 					PROC_SUB_RB : begin
-						sram_addr		<=	sram_rd_addr;
-						sram_rd_addr	<=	sram_rd_addr + 1;
-						sram_oe			<= 	0;		
+						sram_oe			<= 	1;		
 						rdb_addr		<= 	line_rdb_addr;
 						wra_en			<= 	0;
 						wrb_en			<= 	0;
@@ -332,9 +333,10 @@ module img_proc
 	
 	rgb2hsv inst_rgb2hsv
 	(
-		.rgb_in			(),
-		.rgb_clk_in		(),
-		.rgb_fram_valid	(),
+		.rgb_in			(coms_data_proc),
+		.rgb_clk_in		(cmos_pclk),
+		.rgb_fram_valid	(frame_valid),
+		.rgb_data_valid	(coms_valid_proc),
 		.hsv_out		(),
 		.hsv_clk_out    (),
 		.hsv_fram_valid ()
