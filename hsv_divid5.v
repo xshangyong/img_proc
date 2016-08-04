@@ -44,15 +44,15 @@ module hsv_divid5 (
 	remain);
 
 	input	  clock;
-	input	[15:0]  denom;
-	input	[15:0]  numer;
-	output	[15:0]  quotient;
-	output	[15:0]  remain;
+	input	[5:0]  denom;
+	input	[5:0]  numer;
+	output	[5:0]  quotient;
+	output	[5:0]  remain;
 
-	wire [15:0] sub_wire0;
-	wire [15:0] sub_wire1;
-	wire [15:0] remain = sub_wire0[15:0];
-	wire [15:0] quotient = sub_wire1[15:0];
+	wire [5:0] sub_wire0;
+	wire [5:0] sub_wire1;
+	wire [5:0] remain = sub_wire0[5:0];
+	wire [5:0] quotient = sub_wire1[5:0];
 
 	lpm_divide	LPM_DIVIDE_component (
 				.clock (clock),
@@ -68,8 +68,8 @@ module hsv_divid5 (
 		LPM_DIVIDE_component.lpm_nrepresentation = "UNSIGNED",
 		LPM_DIVIDE_component.lpm_pipeline = 6,
 		LPM_DIVIDE_component.lpm_type = "LPM_DIVIDE",
-		LPM_DIVIDE_component.lpm_widthd = 16,
-		LPM_DIVIDE_component.lpm_widthn = 16;
+		LPM_DIVIDE_component.lpm_widthd = 6,
+		LPM_DIVIDE_component.lpm_widthn = 6;
 
 
 endmodule
@@ -90,18 +90,18 @@ endmodule
 // Retrieval info: CONSTANT: LPM_NREPRESENTATION STRING "UNSIGNED"
 // Retrieval info: CONSTANT: LPM_PIPELINE NUMERIC "6"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "LPM_DIVIDE"
-// Retrieval info: CONSTANT: LPM_WIDTHD NUMERIC "16"
-// Retrieval info: CONSTANT: LPM_WIDTHN NUMERIC "16"
+// Retrieval info: CONSTANT: LPM_WIDTHD NUMERIC "6"
+// Retrieval info: CONSTANT: LPM_WIDTHN NUMERIC "6"
 // Retrieval info: USED_PORT: clock 0 0 0 0 INPUT NODEFVAL "clock"
-// Retrieval info: USED_PORT: denom 0 0 16 0 INPUT NODEFVAL "denom[15..0]"
-// Retrieval info: USED_PORT: numer 0 0 16 0 INPUT NODEFVAL "numer[15..0]"
-// Retrieval info: USED_PORT: quotient 0 0 16 0 OUTPUT NODEFVAL "quotient[15..0]"
-// Retrieval info: USED_PORT: remain 0 0 16 0 OUTPUT NODEFVAL "remain[15..0]"
+// Retrieval info: USED_PORT: denom 0 0 6 0 INPUT NODEFVAL "denom[5..0]"
+// Retrieval info: USED_PORT: numer 0 0 6 0 INPUT NODEFVAL "numer[5..0]"
+// Retrieval info: USED_PORT: quotient 0 0 6 0 OUTPUT NODEFVAL "quotient[5..0]"
+// Retrieval info: USED_PORT: remain 0 0 6 0 OUTPUT NODEFVAL "remain[5..0]"
 // Retrieval info: CONNECT: @clock 0 0 0 0 clock 0 0 0 0
-// Retrieval info: CONNECT: @denom 0 0 16 0 denom 0 0 16 0
-// Retrieval info: CONNECT: @numer 0 0 16 0 numer 0 0 16 0
-// Retrieval info: CONNECT: quotient 0 0 16 0 @quotient 0 0 16 0
-// Retrieval info: CONNECT: remain 0 0 16 0 @remain 0 0 16 0
+// Retrieval info: CONNECT: @denom 0 0 6 0 denom 0 0 6 0
+// Retrieval info: CONNECT: @numer 0 0 6 0 numer 0 0 6 0
+// Retrieval info: CONNECT: quotient 0 0 6 0 @quotient 0 0 6 0
+// Retrieval info: CONNECT: remain 0 0 6 0 @remain 0 0 6 0
 // Retrieval info: GEN_FILE: TYPE_NORMAL hsv_divid5.v TRUE
 // Retrieval info: GEN_FILE: TYPE_NORMAL hsv_divid5.inc FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL hsv_divid5.cmp FALSE
