@@ -10,9 +10,9 @@ module generate_cam
 	output reg[7:0]		cmos_data;
 	output		 reg	cmos_href;	
 	output		 reg	cmos_vsyn;	
-	parameter	hor_num 	 = 512;
-	parameter	ver_num 	 = 8;
-	parameter	horX2_100 	 = 1124;
+	parameter	hor_num 	 = 800;
+	parameter	ver_num 	 = 480;
+	parameter	horX2_100 	 = hor_num*2+100;
 	parameter	total_length = (ver_num * horX2_100) + 2000;
 	
 	reg[31:0] cnt = 0;

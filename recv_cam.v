@@ -20,9 +20,9 @@ module recv_cam
 	input			frame_en;			// low valid 
 	input			proc_done;			// highs valid 
 	
-	output reg[15:0]	data_16b;
-	output reg			data_16b_en;	
-	output reg			cmos_data_valid;	
+	output [15:0]	data_16b;
+	output 			data_16b_en;	
+	output 			cmos_data_valid;	
 	
 	reg			done_d1,done_d2;
 	reg			data_bit = 0;
@@ -46,7 +46,7 @@ module recv_cam
 	parameter	FRM_SEND_FRAM	= 4'b0011;
 	
 	always@(posedge cmos_pclk)begin
-		done_d1 <= 1;  //sim change    done_d1 <= cfg_done;   1
+		done_d1 <= cfg_done;  //sim change    done_d1 <= cfg_done;   1
 		done_d2 <= done_d1;
 	end
 	always@(posedge cmos_pclk)begin
@@ -79,7 +79,7 @@ module recv_cam
 	always@(posedge cmos_pclk)begin
 		if(frame_en == 0) begin
 			if(cnt_frame_en >= 100) begin
-				cnt_frame_en <= cnt_frame_en;
+				cnt_frame_en <= 100;
 			end
 			else begin
 				cnt_frame_en <= cnt_frame_en + 1;
@@ -89,7 +89,7 @@ module recv_cam
 			cnt_frame_en <= 0;
 		end	
 	end
-	assign frame_en_valid = cnt_frame_en == 99 ? 1 : 0;
+	assign frame_en_valid = cnt_frame_en == 100 ? 1 : 0;
 
 	always@(posedge cmos_pclk)begin
 		frame_st <= nxt_fst;
@@ -131,22 +131,27 @@ module recv_cam
 			end
 		endcase
 	end
+
+
+	assign data_16b = data_16b_r;
+	assign data_16b_en = data_16b_enr;
+	assign cmos_data_valid = 1;
 	
-	always@(*) begin
-		case(frame_st)
-			FRM_SEND_FRAM : begin
-				data_16b = data_16b_r;
-				data_16b_en = data_16b_enr;
-				cmos_data_valid = 1;
-			end
+	// always@(*) begin
+		// case(frame_st)
+			// FRM_SEND_FRAM : begin
+				// data_16b = data_16b_r;
+				// data_16b_en = data_16b_enr;
+				// cmos_data_valid = 1;
+			// end
 			
-			default begin
-				data_16b = 0;
-				data_16b_en = 0;
-				cmos_data_valid = 0;
-			end
-		endcase
-	end	
+			// default begin
+				// data_16b = 0;
+				// data_16b_en = 0;
+				// cmos_data_valid = 0;
+			// end
+		// endcase
+	// end	
 	
 	
 	assign vsyn_neg = ~cmos_vsyn_d1 & cmos_vsyn_d2;
@@ -161,7 +166,7 @@ module recv_cam
 			end
 			else begin
 				cnt_vsyn <= cnt_vsyn + 1;
-				cmos_valid <= 1;     // sim change  cmos_valid <= 0   1
+				cmos_valid <= 0;     // sim change  cmos_valid <= 0   1
 			end
 		end
 		else begin

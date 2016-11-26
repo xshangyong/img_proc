@@ -215,7 +215,7 @@ module vga_module
 	wire		cmos_pclk_use;
 	
 	wire[15:0]	coms_data_proc;
-	assign led_o1 =  st_wrsdram; 
+	assign led_o1 =  data_16b_en; 
 	assign led_o2 =  st_rdsdram; 
 	assign led_o3 =  wr_sdram_req; 
 	assign led_o4 =  coms_data_proc > 0 ? 1 : 0; 
@@ -346,10 +346,10 @@ module vga_module
 		end
 	end
 	
-	assign cmos_data_use = virt_data;	//cmos_data;
-	assign cmos_vsyn_use = virt_vsyn;	//cmos_vsyn;
-	assign cmos_href_use = virt_href;	//cmos_href;
-	assign cmos_pclk_use = clk_45M;	//cmos_pclk; 
+	assign cmos_data_use = cmos_data;	//cmos_data;
+	assign cmos_vsyn_use = cmos_vsyn;	//cmos_vsyn;
+	assign cmos_href_use = cmos_href;	//cmos_href;
+	assign cmos_pclk_use = cmos_pclk;	//cmos_pclk; 
 	
 	generate_cam inst_cam(
 		.cmos_pclk	(clk_45M	),
@@ -388,7 +388,7 @@ module vga_module
 		.cmos_pclk		(cmos_pclk_use),
 		.cmos_href		(cmos_href_use),
 		.cmos_vsyn		(cmos_vsyn_use),
-		.frame_en		(RSTn),		
+		.frame_en		(0),		
 		.proc_done		(1),		// proc_done
 		.cfg_done		(cfg_done),
 		.data_16b		(cmos_16b),
@@ -420,12 +420,12 @@ module vga_module
 	//			data_16b
 	//			data_16b_en
 	cam2fifo inst_cam2fifo(
-		.cmos_pclk			(),
+		.cmos_pclk			(cmos_pclk_use),
 		.clk_133M_i			(clk_133M),
 		.rst_133i			(rst_133),
 		.clear_wrsdram_fifo	(clear_wrsdram_fifo),
-		.data_16b			(),
-		.data_16b_en		(),
+		.data_16b			(cmos_16b),
+		.data_16b_en		(cmos_16b_en),
 		.fifo_used_o		(fifo_used),
 		.wr_sdram_data		(wr_sdram_data),
 		.work_st			(work_st)
@@ -728,8 +728,9 @@ module vga_module
 	reg[19:0]	cnt_vga_vsyn_r=0;
 //	assign digi =  cnt_ref_r[9:0]*1000 + cnt_pix_r[11:2] ;
 //	assign digi =  test_rdsdram_addr[18:9]*1000 + test_wrsdram_addr[18:9];
-	assign digi = {7'h0, wr_sdram_add[21:9]};
-	assign digi2 =  cnt_vsyn_133neg[9:0]*1000 + cnt_ref_r[9:0];
+	assign digi = {7'h0, test_wrsdram_addr[21:9]};
+	assign digi2 = {7'h0, test_rdsdram_addr[21:9]};
+//	assign digi2 =  cnt_vsyn_133neg[9:0]*1000 + cnt_ref_r[9:0];
 	
 	assign digi_switch = RSTn ?  digi : digi2 ;
 	
@@ -737,7 +738,7 @@ module vga_module
 	(
 		.clk_i(CLK),
 		.rst_i(rst_100),
-		.num_i(digi),	//{7'h0,wr_sdram_add[21:9]}
+		.num_i(digi_switch),	//{7'h0,wr_sdram_add[21:9]}
 		.row_o(row_o),
 		.column_o(column_o)
 	);

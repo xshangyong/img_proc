@@ -1,16 +1,14 @@
 module rgb2hsv
 (
-	input[15:0]		rgb_in			;
-	input			rgb_clk_in		;
-	input			rgb_fram_valid	;
-	input			rgb_data_valid	;
-	output[15:0]	hsv_out			;
-	output			hsv_clk_out    	;
-	output			hsv_fram_valid 	
+	input[15:0]		rgb_in ,
+	input			rgb_clk_in		,
+	input			rgb_fram_valid	,
+	input			rgb_data_valid	,
+	output reg[15:0]	hsv_out			,
+	output		reg	hsv_clk_out    	,
+	output		reg	hsv_fram_valid 	
 );	
-	reg		hsv_out;
-	reg		hsv_clk_out;
-	reg		hsv_fram_valid;
+
 	
 	wire[5:0]	red;
 	wire[5:0]	green;
@@ -37,7 +35,7 @@ module rgb2hsv
 	wire[10:0]	mult_8 = 0;
 
 // first clk ,get max_1 and min_1	
-	always@(posedge cmos_pclk)begin
+	always@(posedge rgb_clk_in)begin
 		if(red >= green && green >= blue) begin
 			max_1 <= red;
 			min_1 <= blue;
@@ -65,7 +63,7 @@ module rgb2hsv
 	end
 	
 // second clk ,get numer and demo	
-	always@(posedge cmos_pclk)begin
+	always@(posedge rgb_clk_in)begin
 		if(max_1 == 0) begin	//  if max_1==0   then s=0;
 			numer_s_2 <= 0;
 			demo_s_2	<= 1;
@@ -76,7 +74,7 @@ module rgb2hsv
 		end
 	end
 	
-	always@(posedge cmos_pclk)begin
+	always@(posedge rgb_clk_in)begin
 		demo_h_2	<= max_1 - min_1;
 		if(max_1 == min_1) begin //	if max_1==min_1   then h=0;
 			numer_h_2 <= 0;
@@ -95,7 +93,7 @@ module rgb2hsv
 	// divider output latnecy  6 clock cycle , get result after 7 clock
 	// clock 3~8
 	hsv_divid5 inst_div_h(
-	.clock		(cmos_pclk),		
+	.clock		(rgb_clk_in),		
 	.denom		(demo_h_2),
 	.numer		(numer_h_2),
 	.quotient	(quot_h_8),
@@ -103,7 +101,7 @@ module rgb2hsv
 	);
 	
 	hsv_divid5 inst_div_s(
-	.clock		(cmos_pclk),		
+	.clock		(rgb_clk_in),		
 	.denom		(demo_s_2),
 	.numer		(numer_s_2),
 	.quotient	(quot_s_8),
@@ -116,17 +114,17 @@ module rgb2hsv
 	.result		(mult_8)	
 	);
 	
-	always@(posedge cmos_pclk)begin
-		if(max == red && green >= blue) begin
+	always@(posedge rgb_clk_in)begin
+		if(max_1 == red && green >= blue) begin
 			hue <= mult_8[5:0];
 		end		
-		else if(max == red && green <= blue) begin
+		else if(max_1 == red && green <= blue) begin
 			hue <= mult_8[5:0] + 64;
 		end		
-		else if(max == green) begin
+		else if(max_1 == green) begin
 			hue <= mult_8[5:0] + 21;
 		end		
-		else if(max == blue) begin
+		else if(max_1 == blue) begin
 			hue <= mult_8[5:0] + 42;
 		end		
 	end
