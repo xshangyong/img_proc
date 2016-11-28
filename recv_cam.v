@@ -1,3 +1,5 @@
+`include "sim_debug.v"
+
 module recv_cam
 (
 	cmos_data,
@@ -5,12 +7,22 @@ module recv_cam
 	cmos_href,
 	cmos_vsyn,
 	frame_en,
-	proc_done,
 	cfg_done,
 	data_16b,
 	data_16b_en,
 	cmos_data_valid
 );
+
+
+	`ifdef  SIMULATION_MODE
+		assign 	cfg_done_use = 1;
+		assign	cmos_valid_use = 1;
+	`else
+		assign 	cfg_done_use = cfg_done;
+		assign	cmos_valid_use = 0;
+	`endif
+
+
 
 	input[7:0] 		cmos_data;
 	input			cmos_pclk;
@@ -18,7 +30,6 @@ module recv_cam
 	input			cmos_href;
 	input			cmos_vsyn;
 	input			frame_en;			// low valid 
-	input			proc_done;			// highs valid 
 	
 	output [15:0]	data_16b;
 	output 			data_16b_en;	
@@ -39,14 +50,14 @@ module recv_cam
 //	assign 	data_16b = data_16b_r;
 //	assign 	data_16b_en = data_16b_enr;
 	wire	frame_en_valid;
-	
+	wire	cfg_done_use, cmos_valid_use;
 	parameter	FRM_IDE			= 4'b0000;
 	parameter	FRM_FRAM_EN		= 4'b0001;
 	parameter	FRM_PROC_OK		= 4'b0010;
 	parameter	FRM_SEND_FRAM	= 4'b0011;
 	
 	always@(posedge cmos_pclk)begin
-		done_d1 <= cfg_done;  //sim change    done_d1 <= cfg_done;   1
+		done_d1 <= cfg_done_use;  //sim change    done_d1 <= cfg_done;   1
 		done_d2 <= done_d1;
 	end
 	always@(posedge cmos_pclk)begin
@@ -106,7 +117,7 @@ module recv_cam
 				end
 			end
 			FRM_FRAM_EN : begin
-				if(proc_done == 1)begin
+				if(1)begin
 					nxt_fst = FRM_PROC_OK;
 				end
 				else begin
@@ -166,7 +177,7 @@ module recv_cam
 			end
 			else begin
 				cnt_vsyn <= cnt_vsyn + 1;
-				cmos_valid <= 0;     // sim change  cmos_valid <= 0   1
+				cmos_valid <= cmos_valid_use;     // sim change  cmos_valid <= 0   1
 			end
 		end
 		else begin

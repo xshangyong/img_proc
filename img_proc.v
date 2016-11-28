@@ -12,8 +12,7 @@ module img_proc
 	output[1:0]		sram_byte		,
 	output reg[15:0]	coms_data_proc	,
 	output 			coms_valid_proc ,
-	output reg		coms_clk_proc   ,
-	output reg		proc_done
+	output reg		coms_clk_proc   
 );
 
 	parameter	IMG_ROW		= 8;
@@ -164,7 +163,6 @@ module img_proc
 			PROC_IDE : begin
 				sram_wr_addr <= 0;
 				sram_rd_addr <= 0;
-				proc_done	 <= 0;
 				sram_addr	 <= 0;
 				sram_we	 	 <= 1;
 				sram_oe	 	 <= 1;

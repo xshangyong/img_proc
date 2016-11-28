@@ -389,7 +389,6 @@ module vga_module
 		.cmos_href		(cmos_href_use),
 		.cmos_vsyn		(cmos_vsyn_use),
 		.frame_en		(0),		
-		.proc_done		(1),		// proc_done
 		.cfg_done		(cfg_done),
 		.data_16b		(cmos_16b),
 		.data_16b_en	(cmos_16b_en),
@@ -410,7 +409,6 @@ module vga_module
 		.coms_data_proc		(coms_data_proc	),	
 		.coms_valid_proc    (coms_valid_proc),
 		.coms_clk_proc      (coms_clk_proc  ),
-		.proc_done			(proc_done)
 	);
 	
 	
