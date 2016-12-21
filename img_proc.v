@@ -45,15 +45,17 @@ module img_proc
 	reg			outb_valid=0;
 	reg[10:0]	row_count=0;		
 	reg			sram_wr_data_flag=0;
+	reg			proc_done=1;
 	wire		valid_pos, valid_neg;
 	reg			frame_valid=0;
 	wire[15:0]	outa_data;
 	wire[15:0]	outb_data;
 	
-	parameter	PROC_IDE			= 4'b0000;
-	parameter	PROC_WR_SRAM		= 4'b0001;
-	parameter	PROC_FILTER			= 4'b0010;
-	parameter	PROC_END			= 4'b0011;
+	parameter	PROC_WAIT_DONE		= 4'b0000;
+	parameter	PROC_WAIT_FRAM		= 4'b0001;
+	parameter	PROC_WR_SRAM		= 4'b0010;
+	parameter	PROC_FILTER			= 4'b0011;
+	parameter	PROC_END			= 4'b0100;
 
 //	parameter	PROC_PROC_OK		= 4'b0011;
 //	parameter	PROC_SEND_FRAM		= 4'b0100;
@@ -85,7 +87,7 @@ module img_proc
 
 	always@(*) begin
 		case(proc_st)
-			PROC_IDE : begin
+			PROC_WAIT_DONE : begin
 				if(valid_pos == 1)begin
 					nxt_fst = PROC_WR_SRAM;
 				end
@@ -151,7 +153,7 @@ module img_proc
 				endcase
 			end
 			PROC_END : begin
-				nxt_fst = PROC_IDE;
+				nxt_fst = PROC_WAIT_DONE;
 			end
 		endcase
 	end
@@ -160,7 +162,7 @@ module img_proc
 	// image porcessing 
 	always@(posedge cmos_pclk)begin
 		case(proc_st)
-			PROC_IDE : begin
+			PROC_WAIT_DONE : begin
 				sram_wr_addr <= 0;
 				sram_rd_addr <= 0;
 				sram_addr	 <= 0;

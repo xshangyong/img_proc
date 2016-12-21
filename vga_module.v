@@ -399,7 +399,7 @@ module vga_module
 		.cmos_pclk			(cmos_pclk_use	),
 		.data_16b			(cmos_16b		),
 		.data_16b_en		(cmos_16b_en	),
-		.cmos_data_valid	(cmos_data_valid),
+		.cmos_data_valid	(~cmos_vsyn_use),
 		.sram_data			(sram_data		),
 		.sram_addr			(sram_addr		),
 		.sram_we			(sram_we		),
